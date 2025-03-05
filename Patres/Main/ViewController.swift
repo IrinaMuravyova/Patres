@@ -9,12 +9,25 @@ import UIKit
 
 class ViewController: UIViewController {
     let tableView = UITableView()
+    var posts: [Post] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
-        
         setupUI()
+        
+        NetworkManager.shared.fetch { [weak self] result in
+            DispatchQueue.main.async {
+                switch result {
+                    
+                case .success(let fetchedPosts):
+                    self?.posts = fetchedPosts
+                    self?.tableView.reloadData()
+                case .failure(let error):
+                    print(error)
+                }
+            }
+        }
     }
 }
 
@@ -41,11 +54,13 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
             tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             tableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor)
-            
         ])
     }
     
-    func setup(_ cell: UITableViewCell) {
+    func setup(_ cell: UITableViewCell, with post: Post) {
+        
+        cell.contentView.subviews.forEach { $0.removeFromSuperview() }
+        
         let userPicture: UIImageView = {
             let imageView = UIImageView()
             imageView.image = UIImage(systemName: "person")
@@ -61,7 +76,8 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
         
         let title: UILabel = {
             let label = UILabel()
-            label.text = "TITLE"
+            label.text = post.title
+            label.numberOfLines = 0
             label.font = UIFont.systemFont(ofSize: 20, weight: .bold)
             label.contentMode = .scaleAspectFit
             label.translatesAutoresizingMaskIntoConstraints = false
@@ -71,7 +87,8 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
         let text: UILabel = {
             let label = UILabel()
             label.contentMode = .scaleAspectFit
-            label.text = "post text"
+            label.numberOfLines = 0
+            label.text = post.text
             label.translatesAutoresizingMaskIntoConstraints = false
             return label
         }()
@@ -98,19 +115,12 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
         subStackView.addArrangedSubview(userPicture)
         subStackView.addArrangedSubview(title)
         
-        let stackView: UIStackView = {
-            let stack = UIStackView()
-            stack.axis = .vertical
-            stack.spacing = 10
-            stack.alignment = .fill
-            stack.distribution = .fill
-            stack.translatesAutoresizingMaskIntoConstraints = false
-            return stack
-        }()
-        
-        stackView.addArrangedSubview(subStackView)
-        stackView.addArrangedSubview(text)
-        stackView.addArrangedSubview(liked)
+        let stackView = UIStackView(arrangedSubviews: [subStackView, text, liked])
+        stackView.axis = .vertical
+        stackView.spacing = 10
+        stackView.alignment = .fill
+        stackView.distribution = .fill
+        stackView.translatesAutoresizingMaskIntoConstraints = false
         
         cell.contentView.addSubview(stackView)
         
@@ -123,12 +133,13 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        2
+        posts.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
-        setup(cell)
+        let post = posts[indexPath.row]
+        setup(cell, with: post)
         return cell
     }
 }
