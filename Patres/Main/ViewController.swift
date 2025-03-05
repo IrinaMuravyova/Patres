@@ -8,26 +8,47 @@
 import UIKit
 
 class ViewController: UIViewController {
-    let tableView = UITableView()
-    var posts: [Post] = []
+    private let tableView = UITableView()
+    private var posts: [Post] = []
+    private var currentPage = 1
+    private let postsPerPage = 10
+    private var isLoading = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
         setupUI()
         
-        NetworkManager.shared.fetch { [weak self] result in
+        loadPosts(page: currentPage)
+    }
+    
+    private func loadPosts(page: Int) {
+        guard !isLoading else { return }
+        isLoading = true
+        
+        NetworkManager.shared.fetch(page: page, limit: postsPerPage) { [weak self] result in
             DispatchQueue.main.async {
                 switch result {
                     
                 case .success(let fetchedPosts):
-                    self?.posts = fetchedPosts
-                    self?.posts.shuffle()
+                    self?.posts.append(contentsOf: fetchedPosts)
                     self?.tableView.reloadData()
+                    self?.currentPage += 1
                 case .failure(let error):
                     print(error)
                 }
+                self?.isLoading = false
             }
+        }
+    }
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let offsetY = scrollView.contentOffset.y
+        let contentHeight = scrollView.contentSize.height
+        let height = scrollView.frame.size.height
+        
+        if offsetY > contentHeight - height - 100 && !isLoading {
+            loadPosts(page: currentPage)
         }
     }
 }

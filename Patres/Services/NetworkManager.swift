@@ -16,8 +16,9 @@ class NetworkManager {
     private var avatarCache: [Int: String] = [:]
     private let imageCache = NSCache<NSString, UIImage>()
     
-    func fetch(completion: @escaping(Result<[Post], Error>) -> ()) {
-        let url = "https://jsonplaceholder.typicode.com/posts/"
+    func fetch(page: Int, limit: Int, completion: @escaping(Result<[Post], Error>) -> ()) {
+        
+        let url = "https://jsonplaceholder.typicode.com/posts?_page=\(page)&_limit=\(limit)"
         AF.request(url).validate().response { response in
             guard let data = response.data else {
                 if let error = response.error {
