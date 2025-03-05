@@ -14,7 +14,7 @@ class NetworkManager {
     
     private var posts: [Post] = []
     private var avatarCache: [Int: String] = [:]
-    private let imageCache = NSCache<NSString, UIImage>()
+    let imageCache = NSCache<NSString, UIImage>()
     
     func fetch(page: Int, limit: Int, completion: @escaping(Result<[Post], Error>) -> ()) {
         

@@ -76,7 +76,7 @@ class PostTableViewCell: UITableViewCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
-        userPicture.image = UIImage(systemName: "person") 
+        userPicture.image = UIImage(systemName: "person")
         currentImageUrl = nil
     }
     
@@ -87,7 +87,7 @@ class PostTableViewCell: UITableViewCell {
         userPicture.clipsToBounds = true
     }
     
-    func configure(with post: Post) {
+    func configure(with post: Post, image: UIImage?) {
         titleLabel.text = post.title
         textLabelCustom.text = post.text
         currentImageUrl = post.userPicture

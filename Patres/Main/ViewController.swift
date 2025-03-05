@@ -31,6 +31,7 @@ class ViewController: UIViewController {
                 switch result {
                     
                 case .success(let fetchedPosts):
+                    self?.preloadImages(for: fetchedPosts)
                     self?.posts.append(contentsOf: fetchedPosts)
                     self?.tableView.reloadData()
                     self?.currentPage += 1
@@ -42,7 +43,16 @@ class ViewController: UIViewController {
         }
     }
     
+    private func preloadImages(for posts: [Post]) {
+        for post in posts {
+            NetworkManager.shared.loadImage(from: post.userPicture) { _ in
+            }
+        }
+    }
+    
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let visibleCells = tableView.visibleCells as! [PostTableViewCell]
+        
         let offsetY = scrollView.contentOffset.y
         let contentHeight = scrollView.contentSize.height
         let height = scrollView.frame.size.height
@@ -88,7 +98,21 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
             return UITableViewCell()
         }
         let post = posts[indexPath.row]
-        cell.configure(with: post)
+        
+        if let cachedImage = NetworkManager.shared.imageCache.object(forKey: post.userPicture as NSString) {
+            cell.configure(with: post, image: cachedImage)
+        } else {
+            cell.configure(with: post, image: nil)
+            
+            NetworkManager.shared.loadImage(from: post.userPicture) { image in
+                DispatchQueue.main.async {
+                    if let updatedCell = tableView.cellForRow(at: indexPath) as? PostTableViewCell {
+                        updatedCell.configure(with: post, image: image)
+                    }
+                }
+            }
+        }
+        
         return cell
     }
 }
