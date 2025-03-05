@@ -68,7 +68,6 @@ class NetworkManager {
         }
         let photoId = 90 + userId
         let avatarUrl = "https://picsum.photos/id/\(photoId)/200"
-        print("avatarUrl ", avatarUrl)
         avatarCache[userId] = avatarUrl
         completion(avatarUrl)
     }
