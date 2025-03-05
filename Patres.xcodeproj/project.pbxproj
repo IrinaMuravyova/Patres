@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		887B945A2D771CC300BDB22B /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 887B94592D771CC300BDB22B /* Alamofire */; };
+		887B945C2D78987100BDB22B /* PostTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 887B945B2D78987100BDB22B /* PostTableViewCell.swift */; };
 		88D3E81D2D76E4E400E08243 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88D3E81C2D76E4E400E08243 /* AppDelegate.swift */; };
 		88D3E81F2D76E4E400E08243 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88D3E81E2D76E4E400E08243 /* SceneDelegate.swift */; };
 		88D3E8212D76E4E400E08243 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88D3E8202D76E4E400E08243 /* ViewController.swift */; };
@@ -19,6 +20,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		887B945B2D78987100BDB22B /* PostTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostTableViewCell.swift; sourceTree = "<group>"; };
 		88D3E8192D76E4E400E08243 /* Patres.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Patres.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		88D3E81C2D76E4E400E08243 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		88D3E81E2D76E4E400E08243 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -43,6 +45,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		887B945D2D78988100BDB22B /* Cells */ = {
+			isa = PBXGroup;
+			children = (
+				887B945B2D78987100BDB22B /* PostTableViewCell.swift */,
+			);
+			path = Cells;
+			sourceTree = "<group>";
+		};
 		88D3E8102D76E4E400E08243 = {
 			isa = PBXGroup;
 			children = (
@@ -63,6 +73,7 @@
 			isa = PBXGroup;
 			children = (
 				88D3E8332D76E4F000E08243 /* Application */,
+				887B945D2D78988100BDB22B /* Cells */,
 				88D3E8342D76E4F800E08243 /* Main */,
 				88D3E8372D77089200E08243 /* Models */,
 				88D3E8352D76E50000E08243 /* Resources */,
@@ -200,6 +211,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				887B945C2D78987100BDB22B /* PostTableViewCell.swift in Sources */,
 				88D3E83B2D77095900E08243 /* NetworkManager.swift in Sources */,
 				88D3E8212D76E4E400E08243 /* ViewController.swift in Sources */,
 				88D3E81D2D76E4E400E08243 /* AppDelegate.swift in Sources */,
