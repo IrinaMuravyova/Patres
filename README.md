@@ -35,11 +35,9 @@
 ###
 
 <h3 align="left"> Project assembly instructions: </h3>
-
-###
-
-
-###
-
-<h3 align="left">🛠 Technology stack:
 </h3>
+###
+
+
+###
+
