@@ -39,14 +39,6 @@ class PostTableViewCell: UITableViewCell {
         return label
     }()
     
-//    private let likedIcon: UIImageView = {
-//        let imageView = UIImageView()
-//        imageView.image = UIImage(systemName: "heart")
-//        imageView.contentMode = .scaleAspectFit
-//        imageView.translatesAutoresizingMaskIntoConstraints = false
-//        return imageView
-//    }()
-    
     private let likeButton: UIButton = {
         let button = UIButton(type: .system)
         button.setImage(UIImage(systemName: "heart"), for: .normal)
