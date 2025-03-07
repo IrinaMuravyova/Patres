@@ -77,6 +77,7 @@ class PostTableViewCell: UITableViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
         userPicture.image = UIImage(systemName: "person")
+        userPicture.layer.cornerRadius = 0
         currentImageUrl = nil
     }
     
@@ -96,6 +97,7 @@ class PostTableViewCell: UITableViewCell {
             guard let self = self, self.currentImageUrl == post.userPicture else { return }
             DispatchQueue.main.async {
                 self.userPicture.image = image
+                self.userPicture.layer.cornerRadius = self.userPicture.frame.height / 2
             }
         }
     }
