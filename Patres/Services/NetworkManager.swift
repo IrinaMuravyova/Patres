@@ -12,9 +12,6 @@ class NetworkManager {
     static let shared = NetworkManager()
     private init() {}
     
-    private var avatarCache: [Int: String] = [:]
-    let imageCache = NSCache<NSString, UIImage>()
-    
     func fetch(page: Int, limit: Int, completion: @escaping(Result<[Post], Error>) -> ()) {
         
         let url = "https://jsonplaceholder.typicode.com/posts?_page=\(page)&_limit=\(limit)"
@@ -34,16 +31,18 @@ class NetworkManager {
                     
                     for post in postsData {
                         if let userId = post["userId"] as? Int,
+                           let id = post["id"] as? Int,
                            let title = post["title"] as? String,
                            let text = post["body"] as? String {
 
                             group.enter()
                             self.fetchUserAvatar(userId: userId) { avatarUrl in
                                 let post = Post(
+                                    id: String(id),
                                     userPicture: avatarUrl,
                                     title: title,
                                     text: text,
-                                    liked: false
+                                    isLiked: false
                                 )
                                 fetchedPosts.append(post)
                                 group.leave()
@@ -58,38 +57,26 @@ class NetworkManager {
             } catch let error {
                 completion(.failure(error))
             }
-            
         }
     }
     
     private func fetchUserAvatar(userId: Int, completion: @escaping (String) -> Void) {
-        if let cachedAvatar = avatarCache[userId] {
-            completion(cachedAvatar)
-            return
-        }
         let photoId = 90 + userId
         let avatarUrl = "https://picsum.photos/id/\(photoId)/200"
-        avatarCache[userId] = avatarUrl
         completion(avatarUrl)
     }
     
     func loadImage(from url: String, completion: @escaping (UIImage?) -> Void) {
-        if let cachedImage = imageCache.object(forKey: url as NSString) {
-            completion(cachedImage)
-            return
-        }
-        
         AF.request(url).responseData { response in
             switch response.result {
             case .success(let data):
                 if let image = UIImage(data: data) {
-                    self.imageCache.setObject(image, forKey: url as NSString)
                     completion(image)
                 } else {
                     completion(nil)
                 }
             case .failure(let error):
-                print("Ошибка загрузки изображения: \(error)")
+                print("Load image error: \(error)")
                 completion(nil)
             }
         }

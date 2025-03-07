@@ -7,8 +7,13 @@
 
 import UIKit
 
+protocol PostTableViewCellProtocol: AnyObject {
+    func updateImage(_ image: UIImage)
+}
+
 class PostTableViewCell: UITableViewCell {
     static let identifier = "PostTableViewCell"
+    var presenter: PostListPresenterProtocol!
     
     private let userPicture: UIImageView = {
         let imageView = UIImageView()
@@ -92,14 +97,17 @@ class PostTableViewCell: UITableViewCell {
         titleLabel.text = post.title
         textLabelCustom.text = post.text
         currentImageUrl = post.userPicture
-
-        NetworkManager.shared.loadImage(from: post.userPicture) { [weak self] image in
-            guard let self = self, self.currentImageUrl == post.userPicture else { return }
-            DispatchQueue.main.async {
-                self.userPicture.image = image
-                self.userPicture.layer.cornerRadius = self.userPicture.frame.height / 2
-            }
-        }
+        
+        presenter?.loadImage(for: post)
+        
+        userPicture.image = image
+        userPicture.layer.cornerRadius = self.userPicture.frame.height / 2
+        
     }
 }
 
+extension PostTableViewCell: PostTableViewCellProtocol {
+    func updateImage(_ image: UIImage) {
+        self.imageView?.image = image
+    }
+}
