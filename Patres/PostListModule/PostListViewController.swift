@@ -12,6 +12,7 @@ protocol PostListViewProtocol: AnyObject {
     func showLoadingIndicator()
     func hideLoadingIndicator()
     func showError(_ error: Error)
+    func updatePost(_ post: Post)
 }
 
 class PostListViewController: UIViewController {
@@ -91,6 +92,7 @@ extension PostListViewController: UITableViewDataSource, UITableViewDelegate {
             }
         
         let post = posts[indexPath.row]
+        cell.presenter = presenter
         
         if let postEntity = CoreDataManager.shared.fetchPostEntity(for: post.id),
            let imageData = postEntity.imageData,
@@ -133,6 +135,14 @@ extension PostListViewController: PostListViewProtocol {
     
     func showError(_ error: Error) {
         // TODO: обработка ошибки
+    }
+    
+    func updatePost(_ post: Post) {
+        if let index = posts.firstIndex(where: { $0.id == post.id }) {
+            posts[index] = post
+            let indexPath = IndexPath(row: index, section: 0)
+            tableView.reloadRows(at: [indexPath], with: .automatic)
+        }
     }
 }
 

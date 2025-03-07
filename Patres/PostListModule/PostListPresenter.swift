@@ -13,9 +13,11 @@ protocol PostListPresenterProtocol: AnyObject {
     func refreshData()
     func loadNextPage()
     func loadImage(for: Post)
+    func toggleLike(for: Post)
 }
 
 class PostListPresenter: PostListPresenterProtocol {
+    
     var view: PostListViewProtocol?
     var cell: PostTableViewCell?
     var interactor: PostListInteractorProtocol?
@@ -61,6 +63,11 @@ class PostListPresenter: PostListPresenterProtocol {
     func loadImage(for post: Post) {
         interactor?.fetchImage(for: post)
     }
+    
+    func toggleLike(for post: Post) {
+        interactor?.toggleLike(for: post)
+    }
+
 }
 
 extension PostListPresenter: PostListInteractorOutputProtocol {
@@ -78,5 +85,9 @@ extension PostListPresenter: PostListInteractorOutputProtocol {
     
     func didLoadImage(_ image: UIImage) {
         cell?.updateImage(image)
+    }
+    
+    func didUpdatePost(_ post: Post) {
+        view?.updatePost(post)
     }
 }

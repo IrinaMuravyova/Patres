@@ -13,12 +13,14 @@ protocol PostListInteractorProtocol: AnyObject {
     func savePostsToCoreData(posts: [Post])
     func clearPosts()
     func fetchImage(for post: Post)
+    func toggleLike(for: Post)
 }
 
 protocol PostListInteractorOutputProtocol: AnyObject {
     func didLoadPosts(_ posts: [Post])
     func didFailToLoadPosts(_ error : Error)
     func didLoadImage(_ image: UIImage)
+    func didUpdatePost(_ post: Post)
 }
 class PostListInteractor: PostListInteractorProtocol {
     var presenter: PostListInteractorOutputProtocol?
@@ -89,5 +91,12 @@ class PostListInteractor: PostListInteractorProtocol {
                 }
             }
         }
+    }
+    
+    func toggleLike(for post: Post) {
+        coreDataManager.toggleLike(for: post.id)
+        var updatedPost = post
+        updatedPost.isLiked.toggle()
+        presenter?.didUpdatePost(updatedPost)
     }
 }

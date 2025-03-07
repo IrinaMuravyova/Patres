@@ -13,6 +13,7 @@ protocol PostTableViewCellProtocol: AnyObject {
 
 class PostTableViewCell: UITableViewCell {
     static let identifier = "PostTableViewCell"
+    private var post: Post?
     var presenter: PostListPresenterProtocol!
     
     private let userPicture: UIImageView = {
@@ -38,12 +39,18 @@ class PostTableViewCell: UITableViewCell {
         return label
     }()
     
-    private let likedIcon: UIImageView = {
-        let imageView = UIImageView()
-        imageView.image = UIImage(systemName: "heart")
-        imageView.contentMode = .scaleAspectFit
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        return imageView
+//    private let likedIcon: UIImageView = {
+//        let imageView = UIImageView()
+//        imageView.image = UIImage(systemName: "heart")
+//        imageView.contentMode = .scaleAspectFit
+//        imageView.translatesAutoresizingMaskIntoConstraints = false
+//        return imageView
+//    }()
+    
+    private let likeButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setImage(UIImage(systemName: "heart"), for: .normal)
+        return button
     }()
     
     private var currentImageUrl: String?
@@ -57,7 +64,7 @@ class PostTableViewCell: UITableViewCell {
         subStackView.alignment = .center
         subStackView.translatesAutoresizingMaskIntoConstraints = false
 
-        let mainStackView = UIStackView(arrangedSubviews: [subStackView, textLabelCustom, likedIcon])
+        let mainStackView = UIStackView(arrangedSubviews: [subStackView, textLabelCustom, likeButton])
         mainStackView.axis = .vertical
         mainStackView.spacing = 10
         mainStackView.alignment = .fill
@@ -73,6 +80,8 @@ class PostTableViewCell: UITableViewCell {
             mainStackView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
             mainStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10)
         ])
+        
+        likeButton.addTarget(self, action: #selector(likeButtonTapped), for: .touchUpInside)
     }
 
     required init?(coder: NSCoder) {
@@ -93,7 +102,13 @@ class PostTableViewCell: UITableViewCell {
         userPicture.clipsToBounds = true
     }
     
+    @objc private func likeButtonTapped() {
+        guard let post = post else { return }
+        presenter?.toggleLike(for: post)
+    }
+    
     func configure(with post: Post, image: UIImage?) {
+        self.post = post
         titleLabel.text = post.title
         textLabelCustom.text = post.text
         currentImageUrl = post.userPicture
@@ -103,6 +118,7 @@ class PostTableViewCell: UITableViewCell {
         userPicture.image = image
         userPicture.layer.cornerRadius = self.userPicture.frame.height / 2
         
+        likeButton.setImage(UIImage(systemName: post.isLiked ? "heart.fill" : "heart"), for: .normal)
     }
 }
 

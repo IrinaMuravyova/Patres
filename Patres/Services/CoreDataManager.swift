@@ -105,5 +105,18 @@ class CoreDataManager {
             try? mainContext.save()
         }
     }
+    
+    func toggleLike(for postId: String) {
+        guard let postEntity = fetchPostEntity(for: postId) else { return }
+        
+        postEntity.isLiked.toggle()  
+        
+        do {
+            try mainContext.save()
+            print("Лайк изменен для поста с id \(postId), новое значение: \(postEntity.isLiked)")
+        } catch {
+            print("Ошибка при сохранении лайка: \(error)")
+        }
+    }
 }
 
