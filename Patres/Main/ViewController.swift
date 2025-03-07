@@ -51,8 +51,6 @@ class ViewController: UIViewController {
     }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        let visibleCells = tableView.visibleCells as! [PostTableViewCell]
-        
         let offsetY = scrollView.contentOffset.y
         let contentHeight = scrollView.contentSize.height
         let height = scrollView.frame.size.height
