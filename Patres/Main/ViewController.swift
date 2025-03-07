@@ -14,12 +14,13 @@ class ViewController: UIViewController {
     private let postsPerPage = 10
     private var isLoading = false
     private let refreshControl = UIRefreshControl()
+    private let loadingIndicator = UIActivityIndicatorView(style: .large)
     
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
         setupUI()
-        
+        loadingIndicator.startAnimating()
         loadPosts(page: currentPage)
     }
     
@@ -43,10 +44,17 @@ class ViewController: UIViewController {
                     self?.posts.append(contentsOf: fetchedPosts)
                     self?.currentPage += 1
                     self?.tableView.reloadData()
+                    
+//                    self?.loadingIndicator.stopAnimating()
+//                    self?.loadingIndicator.isHidden = true
                 case .failure(let error):
                     print(error)
+//                    self?.loadingIndicator.stopAnimating()
+//                    self?.loadingIndicator.isHidden = true
                 }
                 self?.isLoading = false
+                self?.loadingIndicator.stopAnimating()
+                self?.loadingIndicator.isHidden = true
             }
         }
     }
@@ -73,6 +81,17 @@ class ViewController: UIViewController {
 extension ViewController {
     func setupUI() {
         setupTableView()
+        setupLoadingIndicator()
+    }
+    
+    private func setupLoadingIndicator() {
+        loadingIndicator.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(loadingIndicator)
+        
+        NSLayoutConstraint.activate([
+            loadingIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            loadingIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+        ])
     }
 }
 
