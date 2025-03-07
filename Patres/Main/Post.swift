@@ -6,8 +6,9 @@
 //
 
 struct Post: Decodable {
+    let id: String
     let userPicture: String
     let title: String
     let text: String
-    var liked: Bool
+    var isLiked: Bool
 }

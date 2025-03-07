@@ -45,13 +45,10 @@ class ViewController: UIViewController {
                     self?.currentPage += 1
                     self?.tableView.reloadData()
                     
-//                    self?.loadingIndicator.stopAnimating()
-//                    self?.loadingIndicator.isHidden = true
                 case .failure(let error):
                     print(error)
-//                    self?.loadingIndicator.stopAnimating()
-//                    self?.loadingIndicator.isHidden = true
                 }
+                
                 self?.isLoading = false
                 self?.loadingIndicator.stopAnimating()
                 self?.loadingIndicator.isHidden = true
