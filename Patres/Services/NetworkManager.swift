@@ -12,7 +12,6 @@ class NetworkManager {
     static let shared = NetworkManager()
     private init() {}
     
-    private var posts: [Post] = []
     private var avatarCache: [Int: String] = [:]
     let imageCache = NSCache<NSString, UIImage>()
     
@@ -29,6 +28,8 @@ class NetworkManager {
             
             do {
                 if let postsData = try JSONSerialization.jsonObject(with: data, options:[]) as? [[String: Any]] {
+                    var fetchedPosts: [Post] = []
+                    
                     let group = DispatchGroup()
                     
                     for post in postsData {
@@ -44,13 +45,13 @@ class NetworkManager {
                                     text: text,
                                     liked: false
                                 )
-                                self.posts.append(post)
+                                fetchedPosts.append(post)
                                 group.leave()
                             }
                         }
                     }
                     group.notify(queue: .main) {
-                        completion(.success(self.posts))
+                        completion(.success(fetchedPosts))
                     }
                 }
                 

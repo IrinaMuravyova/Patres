@@ -13,6 +13,7 @@ class ViewController: UIViewController {
     private var currentPage = 1
     private let postsPerPage = 10
     private var isLoading = false
+    private let refreshControl = UIRefreshControl()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -22,10 +23,17 @@ class ViewController: UIViewController {
         loadPosts(page: currentPage)
     }
     
+    @objc private func refreshData() {
+        currentPage = 1
+        posts.removeAll()
+        loadPosts(page: currentPage)
+        refreshControl.endRefreshing()
+    }
+    
     private func loadPosts(page: Int) {
         guard !isLoading else { return }
         isLoading = true
-        
+
         NetworkManager.shared.fetch(page: page, limit: postsPerPage) { [weak self] result in
             DispatchQueue.main.async {
                 switch result {
@@ -33,8 +41,8 @@ class ViewController: UIViewController {
                 case .success(let fetchedPosts):
                     self?.preloadImages(for: fetchedPosts)
                     self?.posts.append(contentsOf: fetchedPosts)
-                    self?.tableView.reloadData()
                     self?.currentPage += 1
+                    self?.tableView.reloadData()
                 case .failure(let error):
                     print(error)
                 }
@@ -79,6 +87,9 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.register(PostTableViewCell.self, forCellReuseIdentifier: PostTableViewCell.identifier)
         
+        tableView.refreshControl = refreshControl
+        refreshControl.addTarget(self, action: #selector(refreshData), for: .valueChanged)
+        
         NSLayoutConstraint.activate([
             tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
@@ -95,6 +106,11 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: PostTableViewCell.identifier, for: indexPath) as? PostTableViewCell else {
             return UITableViewCell()
         }
+        
+        guard posts.count > indexPath.row else {
+                return UITableViewCell()
+            }
+        
         let post = posts[indexPath.row]
         
         if let cachedImage = NetworkManager.shared.imageCache.object(forKey: post.userPicture as NSString) {
