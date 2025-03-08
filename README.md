@@ -33,3 +33,17 @@ Develop a simplified version of the social network feed with the ability to:
 - JSON
 
 # Project assembly instructions: 
+1. System requirements
+   
+   To build and run the project requires:
+   
+     - macOS 13 Ventura or later
+     - Xcode 12 or higher
+   
+3. Cloning the repository
+   
+   git clone https://github.com/IrinaMuravyova/Patres.git
+   
+5. Installing dependencies
+   
+   Alamofire 5.10.2
