@@ -17,6 +17,7 @@ Develop a simplified version of the social network feed with the ability to:
 
 
 # Screenshots: 
+![](https://ibb.co/ycR6Cgyb)
 
 # Technology stack:
 
