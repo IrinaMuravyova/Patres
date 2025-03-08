@@ -2,7 +2,18 @@
 
 ###
 
-<p align="left"></p>
+<p align="left">
+Develop a simplified version of the social network feed with the ability to:
+  Uploading data via the API (use JSONPlaceholder).
+  Displaying posts in the table:
+    The title of the post.
+    Text.
+    The user's avatar (via Lorem Ipsum).
+  Saving posts to CoreData for offline access.
+  The feed updates with a pull-to-refresh gesture.
+  Add stateful likes to CoreData.
+  Implement pagination.
+</p>
 
 ###
 
