@@ -13,7 +13,7 @@ class NetworkMonitor {
     
     private let monitor = NWPathMonitor()
     private let queue = DispatchQueue.global(qos: .background)
-    private let isConnectedSubject = CurrentValueSubject<Bool, Never>(false)
+    private let isConnectedSubject = CurrentValueSubject<Bool, Never>(false)  
     
     var isConnected: Bool {
         isConnectedSubject.value

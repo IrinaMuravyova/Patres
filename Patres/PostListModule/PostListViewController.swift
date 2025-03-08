@@ -10,7 +10,7 @@ import UIKit
 protocol PostListViewProtocol: AnyObject {
     func displayPosts(_ posts: [Post])
     func showLoadingIndicator()
-    func hideLoadingIndicator()
+    func hideLoadingIndicator() 
     func showError(_ error: Error)
     func updatePost(_ post: Post)
 }
@@ -30,7 +30,7 @@ class PostListViewController: UIViewController {
             fatalError("Presenter is not initialized")
         }
         
-        setupUI()
+        setupUI() 
         presenter.viewDidLoad()
     }
 
@@ -134,7 +134,20 @@ extension PostListViewController: PostListViewProtocol {
     }
     
     func showError(_ error: Error) {
-        // TODO: обработка ошибки
+        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+              let window = windowScene.windows.first,
+              let rootViewController = window.rootViewController else { return }
+
+        let alert = UIAlertController(title: "Error",
+                                      message: "An error has occurred. Please restart the application.",
+                                      preferredStyle: .alert)
+        let okAction = UIAlertAction(title: "ОК", style: .default, handler: nil)
+        
+        alert.addAction(okAction)
+
+        DispatchQueue.main.async {
+            rootViewController.present(alert, animated: true, completion: nil)
+        }
     }
     
     func updatePost(_ post: Post) {

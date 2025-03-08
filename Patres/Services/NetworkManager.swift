@@ -66,7 +66,7 @@ class NetworkManager {
         completion(avatarUrl)
     }
     
-    func loadImage(from url: String, completion: @escaping (UIImage?) -> Void) {
+    func loadImage(from url: String, completion: @escaping (UIImage?) -> Void) { 
         AF.request(url).responseData { response in
             switch response.result {
             case .success(let data):

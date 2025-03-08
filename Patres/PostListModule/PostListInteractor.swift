@@ -9,7 +9,6 @@ import UIKit
 
 protocol PostListInteractorProtocol: AnyObject {
     func loadPosts(page: Int, limit: Int)
-    func loadPostsFromCoreData()
     func savePostsToCoreData(posts: [Post])
     func clearPosts()
     func fetchImage(for post: Post)
@@ -48,20 +47,6 @@ class PostListInteractor: PostListInteractorProtocol {
             }
         }
     }
-    
-    func loadPostsFromCoreData() {
-        let posts = coreDataManager.getPosts()
-        
-        for post in posts {
-            if let imageEntity = coreDataManager.fetchPostEntity(for: post.id),
-               let imageData = imageEntity.imageData,
-               let image = UIImage(data: imageData) {
-                presenter?.didLoadImage(image)
-            }
-        }
-        
-        presenter?.didLoadPosts(posts)
-    }
 
     func savePostsToCoreData(posts: [Post]) {
         coreDataManager.update(posts: posts, context: coreDataManager.mainContext)
@@ -93,10 +78,11 @@ class PostListInteractor: PostListInteractorProtocol {
         }
     }
     
-    func toggleLike(for post: Post) {
+    func toggleLike(for post: Post) { 
         coreDataManager.toggleLike(for: post.id)
-        var updatedPost = post
-        updatedPost.isLiked.toggle()
-        presenter?.didUpdatePost(updatedPost)
+        if let index = allPosts.firstIndex(where: { $0.id == post.id }) {
+            allPosts[index].isLiked.toggle()
+            presenter?.didUpdatePost(allPosts[index])
+        }
     }
 }
