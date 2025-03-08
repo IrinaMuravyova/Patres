@@ -16,22 +16,26 @@ protocol PostListPresenterProtocol: AnyObject {
     func toggleLike(for: Post)
 }
 
-class PostListPresenter: PostListPresenterProtocol {
+class PostListPresenter {
+    private var currentPage = 1
+    private let postsPerPage = 10
+    private var cancellables = Set<AnyCancellable>()
     
     var view: PostListViewProtocol?
     var cell: PostTableViewCell?
     var interactor: PostListInteractorProtocol?
-    
-    private var currentPage = 1
-    private let postsPerPage = 10
-    
-    private var cancellables = Set<AnyCancellable>()
 
+    private func loadPosts(page: Int) {
+        interactor?.loadPosts(page: page, limit: postsPerPage)
+    }
+}
+
+// MARK: - PostListPresenterProtocol
+extension PostListPresenter: PostListPresenterProtocol {
     func viewDidLoad() {
         view?.showLoadingIndicator()
     
         NetworkMonitor.shared.isConnectedPublisher
-        
             .sink { [weak self] isConnected in
                 if isConnected {
                     self?.loadPosts(page: self?.currentPage ?? 1)
@@ -42,19 +46,14 @@ class PostListPresenter: PostListPresenterProtocol {
                 self?.view?.hideLoadingIndicator()
             }
             .store(in: &cancellables)
-        
     }
-
+    
     func refreshData() {
         interactor?.clearPosts()
         currentPage = 1
         loadPosts(page: currentPage)
     }
     
-    private func loadPosts(page: Int) {
-        interactor?.loadPosts(page: page, limit: postsPerPage)
-    }
-
     func loadNextPage() {
         currentPage += 1
         loadPosts(page: currentPage)
@@ -67,15 +66,14 @@ class PostListPresenter: PostListPresenterProtocol {
     func toggleLike(for post: Post) {
         interactor?.toggleLike(for: post)
     }
-
 }
 
+// MARK: - PostListInteractorOutputProtocol
 extension PostListPresenter: PostListInteractorOutputProtocol {
     func didLoadPosts(_ posts: [Post]) {
         view?.hideLoadingIndicator()
         view?.displayPosts(posts)
         interactor?.savePostsToCoreData(posts: posts)
-        
     }
 
     func didFailToLoadPosts(_ error: Error) {

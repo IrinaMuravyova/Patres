@@ -21,12 +21,24 @@ protocol PostListInteractorOutputProtocol: AnyObject {
     func didLoadImage(_ image: UIImage)
     func didUpdatePost(_ post: Post)
 }
-class PostListInteractor: PostListInteractorProtocol {
-    var presenter: PostListInteractorOutputProtocol?
+
+class PostListInteractor {
     private let networkManager = NetworkManager.shared
     private let coreDataManager = CoreDataManager.shared
     private var allPosts: [Post] = []
+    
+    var presenter: PostListInteractorOutputProtocol?
 
+    private func preloadImages(for posts: [Post]) {
+        for post in posts {
+            networkManager.loadImage(from: post.userPicture) { _ in
+            }
+        }
+    }
+}
+
+// MARK: - PostListInteractorProtocol
+extension PostListInteractor: PostListInteractorProtocol {
     func loadPosts(page: Int, limit: Int) {
         networkManager.fetch(page: page, limit: limit) { [weak self] result in
             switch result {
@@ -40,14 +52,7 @@ class PostListInteractor: PostListInteractorProtocol {
             }
         }
     }
-
-    private func preloadImages(for posts: [Post]) {
-        for post in posts {
-            networkManager.loadImage(from: post.userPicture) { _ in
-            }
-        }
-    }
-
+    
     func savePostsToCoreData(posts: [Post]) {
         coreDataManager.update(posts: posts, context: coreDataManager.mainContext)
         
@@ -78,7 +83,7 @@ class PostListInteractor: PostListInteractorProtocol {
         }
     }
     
-    func toggleLike(for post: Post) { 
+    func toggleLike(for post: Post) {
         coreDataManager.toggleLike(for: post.id)
         if let index = allPosts.firstIndex(where: { $0.id == post.id }) {
             allPosts[index].isLiked.toggle()

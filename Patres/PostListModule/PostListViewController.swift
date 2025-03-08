@@ -15,7 +15,7 @@ protocol PostListViewProtocol: AnyObject {
     func updatePost(_ post: Post)
 }
 
-class PostListViewController: UIViewController {
+final class PostListViewController: UIViewController {
     private let tableView = UITableView()
     private var posts: [Post] = []
     private let refreshControl = UIRefreshControl()
@@ -38,14 +38,17 @@ class PostListViewController: UIViewController {
         presenter.refreshData()
         refreshControl.endRefreshing()
     }
-    
-    func setupUI() {
+}
+
+// MARK: - private functions
+extension PostListViewController {
+    private func setupUI() {
         view.backgroundColor = .white
         setupTableView()
         setupLoadingIndicator()
     }
 
-    func setupTableView() {
+    private func setupTableView() {
         view.addSubview(tableView)
 
         tableView.dataSource = self
@@ -76,7 +79,7 @@ class PostListViewController: UIViewController {
     }
 }
 
-// MARK: - UITableViewDataSource
+// MARK: - UITableViewDataSource, UITableViewDelegate
 extension PostListViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return posts.count
@@ -113,6 +116,7 @@ extension PostListViewController: UITableViewDataSource, UITableViewDelegate {
     }
 }
 
+// MARK: - PostListViewProtocol
 extension PostListViewController: PostListViewProtocol {
     func displayPosts(_ posts: [Post]) {
         self.posts = posts
@@ -159,6 +163,7 @@ extension PostListViewController: PostListViewProtocol {
     }
 }
 
+// MARK: - UIScrollViewDelegate
 extension PostListViewController: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let contentHeight = scrollView.contentSize.height

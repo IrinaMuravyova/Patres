@@ -12,6 +12,12 @@ class NetworkManager {
     static let shared = NetworkManager()
     private init() {}
     
+    private func fetchUserAvatar(userId: Int, completion: @escaping (String) -> Void) {
+        let photoId = 90 + userId
+        let avatarUrl = "https://picsum.photos/id/\(photoId)/200"
+        completion(avatarUrl)
+    }
+    
     func fetch(page: Int, limit: Int, completion: @escaping(Result<[Post], Error>) -> ()) {
         
         let url = "https://jsonplaceholder.typicode.com/posts?_page=\(page)&_limit=\(limit)"
@@ -58,12 +64,6 @@ class NetworkManager {
                 completion(.failure(error))
             }
         }
-    }
-    
-    private func fetchUserAvatar(userId: Int, completion: @escaping (String) -> Void) {
-        let photoId = 90 + userId
-        let avatarUrl = "https://picsum.photos/id/\(photoId)/200"
-        completion(avatarUrl)
     }
     
     func loadImage(from url: String, completion: @escaping (UIImage?) -> Void) { 

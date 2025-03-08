@@ -26,6 +26,18 @@ class CoreDataManager {
         return persistentContainer.viewContext
     }
     
+    private func createPost(with post: Post) {
+        let newPostEntity = PostEntity(context: mainContext)
+        newPostEntity.id = post.id
+        newPostEntity.userPicture = post.userPicture
+        newPostEntity.title = post.title
+        newPostEntity.text = post.text
+        newPostEntity.isLiked = post.isLiked
+    }
+}
+
+// MARK: - Public methods
+extension CoreDataManager {
     func getPosts() -> [Post] {
         let fetchRequest = NSFetchRequest<PostEntity>(entityName: "PostEntity")
             
@@ -39,15 +51,6 @@ class CoreDataManager {
             print("Get posts error: \(error)")
             return []
         }
-    }
-    
-    func createPost(with post: Post) {
-        let newPostEntity = PostEntity(context: mainContext)
-        newPostEntity.id = post.id
-        newPostEntity.userPicture = post.userPicture
-        newPostEntity.title = post.title
-        newPostEntity.text = post.text
-        newPostEntity.isLiked = post.isLiked
     }
     
     func update(posts: [Post], context: NSManagedObjectContext) {
@@ -80,7 +83,7 @@ class CoreDataManager {
         }
     }
     
-     func fetchPostEntity(for postId: String) -> PostEntity? {
+    func fetchPostEntity(for postId: String) -> PostEntity? {
         let fetchRequest: NSFetchRequest<PostEntity> = PostEntity.fetchRequest()
         fetchRequest.predicate = NSPredicate(format: "id == %@", postId)
         
@@ -92,7 +95,7 @@ class CoreDataManager {
             return nil
         }
     }
-
+    
     func saveImage(_ image: UIImage, for post: Post) {
         if let postEntity = fetchPostEntity(for: post.id) {
             let imageData = image.jpegData(compressionQuality: 1.0)
@@ -101,10 +104,10 @@ class CoreDataManager {
         }
     }
     
-    func toggleLike(for postId: String) { 
+    func toggleLike(for postId: String) {
         guard let postEntity = fetchPostEntity(for: postId) else { return }
         
-        postEntity.isLiked.toggle()  
+        postEntity.isLiked.toggle()
         
         do {
             try mainContext.save()
@@ -113,4 +116,3 @@ class CoreDataManager {
         }
     }
 }
-
